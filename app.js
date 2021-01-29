@@ -17,4 +17,5 @@ server.use("/task1", function(request, response){
     response.render("task1.hbs");
 });
 
-server.listen(3000);
+
+module.exports = server;
