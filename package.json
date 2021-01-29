@@ -1,6 +1,9 @@
 {
-  "name": "crudserver",
+  "name": "dotnetjudge",
   "version": "1.0.0",
+  "scripts": {
+    "start": "node ./bin/www"
+  },
   "dependencies": {
     "axios": "^0.21.1",
     "codemirror": "^5.59.2",
