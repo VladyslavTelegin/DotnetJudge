@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link type="text/css"  rel="stylesheet" href="./ui-page-style.css" />
+		<link type="text/css"  rel="stylesheet" href="./codemirror/css/docs.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="./codemirror/js/codemirror.js"></script>
+	</head>	
+	<body>
+		<div class="loader"></div>
+		<table style="margin-bottom: 15px;">
+			<tr>
+				<td><img src="./dotnet-judge.png" width="94" /><td/>
+				<td id="header-holder">Judge Module<td/>
+				<td id="task-holder">→ Quiz 1<td/>
+			</tr>	
+		<table>
+		<p class="task-description-holder">
+			Split the string into pairs of two characters.<br />
+			If the string contains an odd number of characters, then the missing second character of the final pair should be replaced with an underscore ('_').
+			<br /><br />
+			<b>Input:</b> A string.<br />
+			<b>Output:</b> An iterable of strings.
+			<br />
+		</p>
+		<code>
+			Split("abcd") => "ab, cd"<br />
+			Split("abc") => "ab, c_"
+		</code>
+		<textarea id="task-input" rows="10" cols="200">
+using System;
+using System.Text;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+
+public class Program 
+{
+	public static void Split(string input)
+	{
+		// Write code here..
+	}
+}</textarea>
+
+		<button id="submit-button">Submit</button>
+
+		<div id="results-container">		
+		</div>
+
+		<script type="text/javascript">
+  			var editor = CodeMirror.fromTextArea('task-input', {
+    			parserfile: ["../contrib/csharp/js/tokenizecsharp.js", "../contrib/csharp/js/parsecsharp.js"],
+    			stylesheet: "codemirror/contrib/csharp/css/csharpcolors.css",
+    			path: "./codemirror/js/",
+    			height: "400px",
+    			indentUnit: 4
+  			});
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+  				$('#submit-button').bind('click', function() {
+				    $('#submit-button').attr('disabled', 'disabled');
+					$('div.loader').show();
+  				    $("#results-container").empty();
+  					var codeVal = editor.getCode().replaceAll('"', '\"');
+  					var body = JSON.stringify({ code: codeVal, taskId: 1 });
+  					$.ajax({
+    					type: "POST",
+    					url: "/api/dotnet/check",
+    					data: body,
+    					dataType: 'json',
+            			contentType: 'application/json',
+    					success: function(data) {
+							$('div.loader').hide();
+							
+    						if (data.Errors !== null) {
+								   $('#submit-button').removeAttr('disabled');
+								$("#results-container").css('background', 'red');
+    							$("#results-container").append(`<p style="color: white; margin: 4px;">&gt;&gt; ${data.Errors}</p>`)
+    						} else {
+								if (data.Output === '') {
+									$('#submit-button').removeAttr('disabled');
+									$("#results-container").css('background', 'red');
+    								$("#results-container").append(`<p style="color: white; margin: 4px;">&gt;&gt; No output.</p>`);
+								} else {
+									$("#results-container").css('background', 'green');
+    								$("#results-container").append(`<p style="color: white; margin: 4px;">&gt;&gt; ${data.Output}</p>`);
+								}
+    						}
+    					},
+    					error: function(errorMessage) {
+							$('div.loader').hide();
+						    $('#submit-button').removeAttr('disabled');
+        					$("#results-container").css('background', 'red');
+    						$("#results-container").append(`<p style="color: white; margin: 4px;">&gt;&gt; ${errorMessage}</p>`)
+        				}
+        			});
+  				});
+			});
+		</script>
+	</body>
+</html>
