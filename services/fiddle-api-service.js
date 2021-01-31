@@ -11,7 +11,7 @@ class FiddleApiService {
             NuGetPackageVersionIds: '47080',
             UseResultCache: true
         }).catch(error => {
-            console.error(error)
+            console.error(error);
         });
     }
 }

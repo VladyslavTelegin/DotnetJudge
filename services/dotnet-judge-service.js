@@ -1,5 +1,5 @@
 const FiddleApiService = require('../services/fiddle-api-service.js');
-const TaskDataStorage = require('../services/task-data-storage.js');
+const QuizStorageProvider = require('../services/quiz-storage-provider.js');
 
 const CODE_EXECUTOR_FRAGMENT = 
     "public static void Main() { foreach (var inputData in {inputDataCollection}) { {callMethodName}(inputData); }}";
@@ -7,14 +7,14 @@ const CODE_EXECUTOR_FRAGMENT =
 class DotnetJudgeService {
     constructor() {
         this._fiddleApiService = new FiddleApiService();
-        this._taskDataStorage = new TaskDataStorage();
+        this._quizStorageProvider = new QuizStorageProvider();
     }
 
     async check(request) {
 
-        var taskData = this._taskDataStorage.getByTaskId(request.taskId);
+        var quizData = await this._quizStorageProvider.getByQuizNumber(request.quizNumber);
 
-        var wrappedCodeBlock = this._wrapCodeBlock(request.code, taskData);
+        var wrappedCodeBlock = this._wrapCodeBlock(request.code, quizData);
         var response = (await this._fiddleApiService.post(wrappedCodeBlock)).data;
         
         var output = response.ConsoleOutput;
@@ -45,13 +45,13 @@ class DotnetJudgeService {
         };
     }
 
-    _wrapCodeBlock(rawCodeBlock, taskData)
+    _wrapCodeBlock(rawCodeBlock, quizData)
     {
         rawCodeBlock = rawCodeBlock.trimEnd();
         
         const codeExecutor = CODE_EXECUTOR_FRAGMENT
-            .replace('{inputDataCollection}', taskData.inputData)
-            .replace('{callMethodName}', taskData.requiredMethodName);
+            .replace('{inputDataCollection}', quizData.InputData)
+            .replace('{callMethodName}', quizData.CallMethodName);
 
         const lastClosingBracePosition = rawCodeBlock.length - 1;
         return [rawCodeBlock.slice(0, lastClosingBracePosition), codeExecutor, rawCodeBlock.slice(lastClosingBracePosition)].join('');

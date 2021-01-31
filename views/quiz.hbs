@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link type="text/css"  rel="stylesheet" href="./ui-page-style.css" />
+		<link type="text/css"  rel="stylesheet" href="./codemirror/css/docs.css">
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script type="text/javascript" src="./codemirror/js/codemirror.js"></script>
+	</head>	
+	<body>
+		<div class="loader"></div>
+		<input id="quizNumber" type="hidden" value="{{Number}}" />
+		<table style="margin-bottom: 15px;">
+			<tr>
+				<td><img src="./dotnet-judge.png" width="94" /><td/>
+				<td id="header-holder">Code Judge<td/>
+				<td id="quiz-holder">→ {{Name}}<td/>
+			</tr>	
+		<table>
+		<p class="quiz-description-holder">{{Description}}</p>
+		<code>{{Samples}}</cod	e>
+		<textarea id="quiz-input" rows="10" cols="200">{{FunctionCode}}</textarea>
+		<button id="submit-button">Submit</button>
+		<div id="results-container"></div>
+		<script type="text/javascript" src="./quiz-renderer.js"></script>
+	</body>
+</html>
