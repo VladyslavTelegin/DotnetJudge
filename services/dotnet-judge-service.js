@@ -23,8 +23,8 @@ class DotnetJudgeService {
         if (errors === null) {
             if (output !== '') {
                 var splittedOutput = output.split('\r\n');
-                for (var i = 0; i < taskData.expectedOutputs.length; i++) {
-                    if (taskData.expectedOutputs[i] !== splittedOutput[i]) {
+                for (var i = 0; i < quizData.expectedOutputs.length; i++) {
+                    if (quizData.expectedOutputs[i] !== splittedOutput[i]) {
                         errors = "Wrong. Some tests not passed.";
                         break;
                     }
@@ -38,7 +38,7 @@ class DotnetJudgeService {
         delete stats.IsResultCache;
 
         return {
-            TaskId: request.taskId,
+            QuizNumber: request.quizNumber,
             Output: output, 
             Errors: errors,
             Stats: stats
