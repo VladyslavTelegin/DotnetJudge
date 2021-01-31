@@ -23,8 +23,9 @@ class DotnetJudgeService {
         if (errors === null) {
             if (output !== '') {
                 var splittedOutput = output.split('\r\n');
-                for (var i = 0; i < quizData.expectedOutputs.length; i++) {
-                    if (quizData.expectedOutputs[i] !== splittedOutput[i]) {
+                var expectedOutputsJson = JSON.parse(quizData.ExpectedOutputs);
+                for (var i = 0; i < expectedOutputsJson.length; i++) {
+                    if (expectedOutputsJson[i] !== splittedOutput[i]) {
                         errors = "Wrong. Some tests not passed.";
                         break;
                     }
