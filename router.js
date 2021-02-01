@@ -31,9 +31,9 @@ router.use((req, res, next) => {
             }  
         }
       );
+    } else {
+        next();
     }
-  
-    next();
 });
 
 router.route('/auth')
