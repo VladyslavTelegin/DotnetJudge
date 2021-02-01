@@ -12,6 +12,7 @@ router.use(bodyParser.json());
 router.use((req, res, next) => {
     if (req.headers.referer && req.headers.referer.match(/\/quiz\?num=\d/g)) {
         req.application = 'localhost';
+        next();
     } else if (req.headers.authorization) {
       jwt.verify(
         req.headers.authorization.split(' ')[1],
@@ -25,9 +26,8 @@ router.use((req, res, next) => {
                 if (application !== null) {
                     req.application = application;
                 }
-                if (!req.application) { 
-                    next();
-                }
+                
+                next();
             }  
         }
       );
