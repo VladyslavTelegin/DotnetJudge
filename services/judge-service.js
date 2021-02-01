@@ -1,13 +1,15 @@
-const FiddleApiService = require('../services/fiddle-api-service.js');
-const QuizStorageProvider = require('../services/quiz-storage-provider.js');
+const FiddleApiService = require('./fiddle-api-service.js');
+const QuizStorageProvider = require('./quiz-storage-provider.js');
+const QuizLogsService = require('./quiz-logs-service.js');
 
 const CODE_EXECUTOR_FRAGMENT = 
-    "public static void Main() { foreach (var inputData in {inputDataCollection}) { {callMethodName}(inputData); }}";
+    "public static void Main() { foreach (var inputData in {inputDataCollection}) { var result = {callMethodName}(inputData); {consoleOutputFragment}; }}";
 
-class DotnetJudgeService {
+class JudgeService {
     constructor() {
         this._fiddleApiService = new FiddleApiService();
         this._quizStorageProvider = new QuizStorageProvider();
+        this._quizLogsService = new QuizLogsService();
     }
 
     async check(request) {
@@ -30,13 +32,15 @@ class DotnetJudgeService {
                         break;
                     }
                 }
-
+               
                 output = "Success. All tests passed. Good luck!";
             }    
         }
 
         var stats = response.Stats
         delete stats.IsResultCache;
+
+        await this._quizLogsService.log(request.userId, request.code, errors === null, errors, request.quizNumber);
 
         return {
             QuizNumber: request.quizNumber,
@@ -50,13 +54,19 @@ class DotnetJudgeService {
     {
         rawCodeBlock = rawCodeBlock.trimEnd();
         
-        const codeExecutor = CODE_EXECUTOR_FRAGMENT
+        let codeExecutor = CODE_EXECUTOR_FRAGMENT
             .replace('{inputDataCollection}', quizData.InputData)
             .replace('{callMethodName}', quizData.CallMethodName);
+
+        if (!quizData.OutputType.includes('[]')) {
+            codeExecutor = codeExecutor.replace('{consoleOutputFragment}', 'Console.WriteLine(result)');
+        } else {
+            codeExecutor = codeExecutor.replace('{consoleOutputFragment}', 'Console.WriteLine(string.Join(", ", result))');
+        }
 
         const lastClosingBracePosition = rawCodeBlock.length - 1;
         return [rawCodeBlock.slice(0, lastClosingBracePosition), codeExecutor, rawCodeBlock.slice(lastClosingBracePosition)].join('');
     }
 }
 
-module.exports = DotnetJudgeService;
+module.exports = JudgeService;

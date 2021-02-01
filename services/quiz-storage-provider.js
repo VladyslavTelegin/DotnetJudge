@@ -1,27 +1,13 @@
-const { Client } = require('pg');
-const fs = require('fs');
 const cache = require('memory-cache');
+const PgClientProvider = require('./pg-connection-provider.js');
 const CACHE_KEY = "quizes";
 
-class QuizStorageProvider {
-    
+class QuizStorageProvider extends PgClientProvider {
+
     async getByQuizNumber(quizNumber) {
 
-        if (!cache.get(CACHE_KEY)) {
-            let client = new Client({
-                host: 'db-postgresql-fra1-44276-do-user-8641935-0.b.db.ondigitalocean.com',
-                user: 'doadmin',
-                database: 'defaultdb',
-                password: 'x6gvv47s8u4z8fyl',
-                port: 25060,
-                ssl: {
-                    rejectUnauthorized: false,
-                    ca: fs.readFileSync('./ca-certificate.crt').toString(),
-                }
-            });
-
-            client.connect();
-            const quizes = (await client.query(`SELECT * FROM "Quizes"`)).rows;
+        if (!cache.get(CACHE_KEY)) {        
+            const quizes = (await (super.createPgConnection()).query(`SELECT * FROM "Quizes"`)).rows;
             cache.put(CACHE_KEY, quizes);
         }   
 

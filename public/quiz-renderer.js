@@ -13,10 +13,10 @@ $(document).ready(function() {
         $("#results-container").empty();
         var codeVal = editor.getCode().replaceAll('"', '\"');
       var quizNumberVal = $('input#quizNumber').val();
-        var body = JSON.stringify({ code: codeVal, quizNumber: quizNumberVal });
+        var body = JSON.stringify({ code: codeVal, quizNumber: quizNumberVal, userId: 'ui' });
         $.ajax({
           type: "POST",
-          url: "/api/dotnet/check",
+          url: "/api/check",
           data: body,
           dataType: 'json',
           contentType: 'application/json',
