@@ -38,8 +38,6 @@ class JudgeService {
         var stats = response.Stats
         delete stats.IsResultCache;
 
-        await this._quizLogsService.log(request.userId, request.code, errors === null, errors, request.quizNumber);
-
         return {
             QuizNumber: request.quizNumber,
             Output: output, 
