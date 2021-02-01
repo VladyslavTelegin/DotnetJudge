@@ -10,7 +10,7 @@ const tokenKey = '1a2b-3c4d-5e6f-7g8h';
 var router = express.Router();
 router.use(bodyParser.json());
 router.use((req, res, next) => {
-    if (req.headers.referer.match(/\/quiz\?num=\d/g)) {
+    if (req.headers.referer && req.headers.referer.match(/\/quiz\?num=\d/g)) {
         req.application = 'localhost';
     } else if (req.headers.authorization) {
       jwt.verify(
@@ -39,10 +39,9 @@ router.use((req, res, next) => {
 router.route('/auth')
     .post(async (req, res) => {
         if (await authService.verifyApplication(req.body.applicationId, req.body.password, req.body.ipV4)) {
-            const application = await authService.getApplicationById(req.body.applicationId);
             res.status(200).json({
-                id: application.id,
-                token: jwt.sign({ id: application.id }, tokenKey),
+                id: req.body.applicationId,
+                token: jwt.sign({ id: req.body.applicationId }, tokenKey),
             });
         } else {
             res.status(403).json({ message: ACCESS_DENIED_MESSAGE });

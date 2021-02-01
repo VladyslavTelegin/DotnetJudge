@@ -3,7 +3,8 @@ const router = require('./router');
 const cors = require('cors');
 const server = new express();
 const hbs = require('hbs');
-const QuizStorageProvider = require('./services/quiz-storage-provider.js')
+const QuizStorageProvider = require('./services/quiz-storage-provider.js');
+const AuthService = require('./services/auth-service.js');
 
 server.use(express.static(__dirname + '/public'));
 server.use(cors());
@@ -30,5 +31,10 @@ server.get("/quiz/invalidate-cache", (request, response) => {
     response.redirect('/');
 });
 
-// server.listen(3000);
+server.get("/auth/invalidate-cache", (request, response) => { 
+    (new AuthService()).invalidateCache();
+    response.redirect('/');
+});
+
+//server.listen(3000);
 module.exports = server;

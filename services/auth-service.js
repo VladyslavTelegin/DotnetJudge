@@ -1,13 +1,13 @@
 const PgClientProvider = require('./pg-connection-provider.js');
 const passwordHash = require('password-hash');
-const GET_APPLICATION_BY_ID_QUERY = `SELECT * FROM "Applications" WHERE "ApplicationId" = '{applicationId}'`;
+const cache = require('memory-cache');
+const CACHE_KEY = "applications";
+const GET_APPLICATIONS_QUERY = `SELECT * FROM "Applications"`;
 
 class AuthService extends PgClientProvider {
     async verifyApplication(applicationId, password, ipV4) {
-        const applications =
-            (await (super.createPgConnection()).query(GET_APPLICATION_BY_ID_QUERY.replace("{applicationId}", applicationId))).rows;
-        if (applications.length === 1) {
-            const application = applications[0];
+        const application = await this.getApplicationById(applicationId);
+        if (application !== null) {
             return passwordHash.verify(password, application.PasswordHash) && application.IPv4 === ipV4;
         } else {
             return false;
@@ -15,9 +15,21 @@ class AuthService extends PgClientProvider {
     }
 
     async getApplicationById(applicationId) {
-        const applications =
-            (await (super.createPgConnection()).query(GET_APPLICATION_BY_ID_QUERY.replace("{applicationId}", applicationId))).rows
-        return applications.length === 1 ? applications[0] : null;
+        const cachedApplications = await this._getAppsFromCache();
+        const filteredApplications = cachedApplications.filter(application => application.ApplicationId === applicationId);
+        return filteredApplications.length === 1 ? filteredApplications[0] : null;
+    }
+
+    invalidateCache() {
+        cache.del(CACHE_KEY);
+    }
+
+    async _getAppsFromCache() {
+        if (!cache.get(CACHE_KEY)) {        
+            const applications = (await (super.createPgConnection()).query(GET_APPLICATIONS_QUERY)).rows;
+            cache.put(CACHE_KEY, applications);
+        }   
+        return cache.get(CACHE_KEY);
     }
 }
 
