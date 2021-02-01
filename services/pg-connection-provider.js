@@ -8,7 +8,7 @@ class PgConnectionProvider {
             user: 'doadmin',
             database: 'defaultdb',
             password: 'x6gvv47s8u4z8fyl',
-            port: 25061,
+            port: 25060,
             ssl: {
                 rejectUnauthorized: false,
                 ca: fs.readFileSync('./ca-certificate.crt').toString(),

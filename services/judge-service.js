@@ -1,6 +1,5 @@
 const FiddleApiService = require('./fiddle-api-service.js');
 const QuizStorageProvider = require('./quiz-storage-provider.js');
-const QuizLogsService = require('./quiz-logs-service.js');
 
 const CODE_EXECUTOR_FRAGMENT = 
     "public static void Main() { foreach (var inputData in {inputDataCollection}) { var result = {callMethodName}(inputData); {consoleOutputFragment}; }}";
@@ -9,7 +8,6 @@ class JudgeService {
     constructor() {
         this._fiddleApiService = new FiddleApiService();
         this._quizStorageProvider = new QuizStorageProvider();
-        this._quizLogsService = new QuizLogsService();
     }
 
     async check(request) {
