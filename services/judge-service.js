@@ -3,7 +3,7 @@ const QuizStorageProvider = require('./quiz-storage-provider.js');
 // const edge = require('edge-js');
 
 const CODE_EXECUTOR_FRAGMENT = 
-    "public static void Run() { foreach (var inputData in {inputDataCollection}) { var result = {callMethodName}(inputData); {consoleOutputFragment}; }}";
+    "public static void Main() { foreach (var inputData in {inputDataCollection}) { var result = {callMethodName}(inputData); {consoleOutputFragment}; }}";
 
 // const CODE_EXECUTOR_FRAGMENT2 = 
 //     "public async Task<object> Invoke(object input) { return {callMethodName}(({inputType})input); }";
