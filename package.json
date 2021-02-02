@@ -9,7 +9,6 @@
     "codemirror": "^5.59.2",
     "cors": "^2.8.5",
     "dotnet": "^1.1.4",
-    "edge-js": "^15.5.2",
     "express": "^4.17.1",
     "hbs": "^4.1.1",
     "jsonwebtoken": "^8.5.1",
