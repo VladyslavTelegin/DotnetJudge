@@ -1,7 +1,7 @@
 const FiddleApiService = require('./fiddle-api-service.js');
 const QuizStorageProvider = require('./quiz-storage-provider.js');
 const edge = require('edge-js');
-
+process.env.EDGE_USE_CORECLR = 1;
 // const CODE_EXECUTOR_FRAGMENT = 
 //     "public static void Main() { foreach (var inputData in {inputDataCollection}) { var result = {callMethodName}(inputData); {consoleOutputFragment}; }}";
 
