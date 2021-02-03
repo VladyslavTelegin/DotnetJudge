@@ -49,7 +49,6 @@ class JudgeService {
             error: trim(errors),
             isPassed: errors === null,
             isClrError: isClrError,
-            isEmptyOutput: output === '',
             clrStats: {
                 runAt: stats.RunAt,
                 compileTime: stats.CompileTime,

@@ -27,14 +27,8 @@ $(document).ready(function() {
                 $("#results-container").css('background', 'red');
                 $("#results-container").append(`<p style="color: white; margin: 4px;">&gt;&gt; ${data.error}</p>`);
             } else {
-                if (data.isEmptyOutput) {
-                    $('#submit-button').removeAttr('disabled');
-                    $("#results-container").css('background', 'red');
-                    $("#results-container").append(`<p style="color: white; margin: 4px;">&gt;&gt; No output</p>`);
-                } else {
-                    $("#results-container").css('background', 'green');
-                    $("#results-container").append(`<p style="color: white; margin: 4px;">&gt;&gt; ${data.output}</p>`);
-                }
+                $("#results-container").css('background', 'green');
+                $("#results-container").append(`<p style="color: white; margin: 4px;">&gt;&gt; ${data.output}</p>`);
             }
           },
           error: function(xhr, status, error) {
