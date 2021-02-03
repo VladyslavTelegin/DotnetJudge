@@ -131,14 +131,23 @@ router.route('/quiz')
             });
             response.status(403).send({ message: ACCESS_DENIED_MESSAGE });
         } else {
-            const quiz = await (new QuizStorageProvider()).getByQuizNumber(request.query.num);
+            try {
+                const quiz = await (new QuizStorageProvider()).getByQuizNumber(request.query.num);
             
-            delete quiz['InputType'];
-            delete quiz['OutputType'];
-            delete quiz['InputData'];
-            delete quiz['ExpectedOutputs'];
-           
-            response.send(quiz);
+                delete quiz['InputType'];
+                delete quiz['OutputType'];
+                delete quiz['InputData'];
+                delete quiz['ExpectedOutputs'];
+               
+                response.send(quiz);
+            } catch (error) {
+                logger.Error({
+                    errorMessage: error.message,
+                    serviceName: 'QuizStorageProvider',
+                    methodName: 'getByQuizNumber',
+                });
+                response.status(500).send({ error: `Unable to get quiz with number = ${request.query.num}.` });
+            }
         }
     });
 
