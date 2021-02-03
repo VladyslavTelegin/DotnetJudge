@@ -55,7 +55,11 @@ router.use((request, response, next) => {
 router.route('/auth')
     .post(async (request, response) => {
         
-        const ipV4 = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
+        const ipV4 = request.headers['x-forwarded-for'];
+        if (!ipV4) {
+            ipV4 = request.connection.remoteAddress;
+        }
+
         const authContext = { applicationId: request.body.applicationId, ipV4: ipV4 };
         
         try {
