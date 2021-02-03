@@ -8,7 +8,10 @@ class AuthService extends PgConnectionProvider {
     async verifyApplication(applicationId, password, ipV4) {
         const application = await this.getApplicationById(applicationId);
         if (application !== null) {
-            return passwordHash.verify(password, application.PasswordHash) && application.IPv4.trimStart().trimEnd() === ipV4;
+            let result = passwordHash.verify(password, application.PasswordHash);
+            if (!application.IgnoreIPv4Verification) {
+                result &&= application.IPv4.trimStart().trimEnd() === ipV4;
+            }
         } else {
             return false;
         }
