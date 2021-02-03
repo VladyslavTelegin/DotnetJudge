@@ -42,13 +42,21 @@ class JudgeService {
         var stats = response.Stats
         delete stats.IsResultCache;
 
+        const trim = (inputString) => inputString ? inputString.trimStart().trimEnd() : inputString;
+
         const result = {
-            output: output, 
-            error: errors,
+            output: trim(output), 
+            error: trim(errors),
             isPassed: errors === null,
             isClrError: isClrError,
             isEmptyOutput: output === '',
-            clrStats: stats
+            clrStats: {
+                runAt: stats.RunAt,
+                compileTime: stats.CompileTime,
+                executeTime: stats.ExecuteTime,
+                memoryUsage: stats.MemoryUsage,
+                cpuUsage: stats.CpuUsage
+            }
         };
 
         logger.Info({
