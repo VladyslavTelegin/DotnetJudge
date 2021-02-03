@@ -1,10 +1,10 @@
-const PgClientProvider = require('./pg-connection-provider.js');
+const PgConnectionProvider = require('./pg-connection-provider.js');
 const passwordHash = require('password-hash');
 const cache = require('memory-cache');
 const CACHE_KEY = "applications";
 const GET_APPLICATIONS_QUERY = `SELECT * FROM "Applications"`;
 
-class AuthService extends PgClientProvider {
+class AuthService extends PgConnectionProvider {
     async verifyApplication(applicationId, password, ipV4) {
         const application = await this.getApplicationById(applicationId);
         if (application !== null) {

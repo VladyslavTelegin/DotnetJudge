@@ -1,8 +1,8 @@
 const cache = require('memory-cache');
-const PgClientProvider = require('./pg-connection-provider.js');
+const PgConnectionProvider = require('./pg-connection-provider.js');
 const CACHE_KEY = "quizes";
 
-class QuizStorageProvider extends PgClientProvider {
+class QuizStorageProvider extends PgConnectionProvider {
 
     async getByQuizNumber(quizNumber) {
 

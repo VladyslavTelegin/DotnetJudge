@@ -3,6 +3,7 @@ const router = require('./router');
 const cors = require('cors');
 const server = new express();
 const hbs = require('hbs');
+
 const QuizStorageProvider = require('./services/quiz-storage-provider.js');
 const AuthService = require('./services/auth-service.js');
 
@@ -15,6 +16,7 @@ server.get('/', function (request, response) {
 server.use('/api', router.routes);
 
 server.set("view engine", "hbs");
+
 server.get("/quiz", async (request, response) => {   
     var quiz = await (new QuizStorageProvider()).getByQuizNumber(request.query.num);
     response.render("quiz.hbs", {
@@ -36,5 +38,5 @@ server.get("/auth/invalidate-cache", (request, response) => {
     response.redirect('/');
 });
 
-//server.listen(3000);
+// server.listen(3000);
 module.exports = server;

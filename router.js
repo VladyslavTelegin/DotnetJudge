@@ -1,61 +1,120 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const methodOverride = require('method-override');
 const jwt = require('jsonwebtoken');
-const JudgeService = require('./services/judge-service.js');
-const AuthService = require('./services/auth-service.js');
-const authService = new AuthService();
-const ACCESS_DENIED_MESSAGE = 'Access is denied.';
-const tokenKey = '1a2b-3c4d-5e6f-7g8h';
+const logger = require('node-file-logger');
 
-var router = express.Router();
+const ACCESS_DENIED_MESSAGE = 'Access is denied.';
+const TOKEN_KEY = '1a2b-3c4d-5e6f-7g8h';
+
+const JudgeService = require('./services/judge-service.js');
+const QuizStorageProvider = require('./services/quiz-storage-provider.js');
+const authService = new (require('./services/auth-service.js'))();
+
+const router = express.Router();
 router.use(bodyParser.json());
-router.use((req, res, next) => {
-    if (req.headers.referer && req.headers.referer.match(/\/quiz\?num=\d/g)) {
-        req.application = 'localhost';
-        next();
-    } else if (req.headers.authorization) {
-      jwt.verify(
-        req.headers.authorization.split(' ')[1],
-        tokenKey,
-        async (err, payload) => {
-            if (err)  { 
-                next();
-            }
-            else if (payload) {
-                const application = await authService.getApplicationById(payload.id);
-                if (application !== null) {
-                    req.application = application;
+router.use(methodOverride());
+
+router.use((request, response, next) => {
+    try {
+        if (request.headers.referer && request.headers.referer.match(/\/quiz\?num=\d/g)) {
+            request.application = 'localhost';
+            next();
+        } else if (request.headers.authorization) {
+          jwt.verify(
+            request.headers.authorization.split(' ')[1],
+            TOKEN_KEY,
+            async (err, payload) => {
+                if (err)  { 
+                    next();
                 }
-                
-                next();
-            }  
+                else if (payload) {
+                    const application = await authService.getApplicationById(payload.id);
+                    if (application !== null) {
+                        request.application = application;
+                    }
+                    
+                    next();
+                }  
+            }
+          );
+        } else {
+            next();
         }
-      );
-    } else {
-        next();
+    } catch (error) {
+        logger.Error({
+            errorMessage: error.message,
+            serviceName: 'AuthService',
+            methodName: 'Jwt-Mdw',
+            context: { authHeader: request.headers.authorization }
+        });
+        response.status(500).send({ error: error.message });
     }
 });
 
 router.route('/auth')
-    .post(async (req, res) => {
-        if (await authService.verifyApplication(req.body.applicationId, req.body.password, req.body.ipV4)) {
-            res.status(200).json({
-                id: req.body.applicationId,
-                token: jwt.sign({ id: req.body.applicationId }, tokenKey),
+    .post(async (request, response) => {
+        
+        const ipV4 = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
+        const authContext = { applicationId: request.body.applicationId, ipV4: ipV4 };
+        
+        try {
+         
+            if (await authService.verifyApplication(request.body.applicationId, request.body.password, ipV4)) {
+                logger.Info({
+                    message: 'Authentication succeeded.',
+                    serviceName: 'AuthService',
+                    methodName: 'VerifyApplication',
+                    context: authContext
+                });
+                response.status(200).json({
+                    id: request.body.applicationId,
+                    token: jwt.sign({ id: request.body.applicationId }, TOKEN_KEY),
+                });
+            } else {
+                logger.Info({
+                    errorMessage: 'Authentication failed.',
+                    serviceName: 'AuthService',
+                    methodName: 'VerifyApplication',
+                    context: authContext
+                });
+                response.status(403).json({ message: ACCESS_DENIED_MESSAGE });
+            }
+        } catch (error) {
+            logger.Error({
+                errorMessage: error.message,
+                serviceName: 'AuthService',
+                methodName: 'VerifyApplication',
+                context: authContext
             });
-        } else {
-            res.status(403).json({ message: ACCESS_DENIED_MESSAGE });
+            response.status(500).send({ error: error.message });
         }
     });
 
 router.route('/check')
-    .post(async (req, res) => {
-        if (!req.application) {
-            res.status(403).send({ message: ACCESS_DENIED_MESSAGE });
+    .post(async (request, response) => {
+        if (!request.application) {
+            response.status(403).send({ message: ACCESS_DENIED_MESSAGE });
         } else {
-            const judgeService = new JudgeService();
-            res.send(await judgeService.check(req.body));
+            try {
+                const judgeService = new JudgeService();
+                response.send(await judgeService.check(request.body));
+            } catch (error) {
+                logger.Error({
+                    errorMessage: error.message,
+                    serviceName: 'JudgeService',
+                    methodName: 'check',
+                    context: { userId: request.body.userId, quizNumber: request.body.quizNumber }
+                });
+                response.status(500).send({ error: error.message })
+            }
         }
+    });
+
+router.route('/quiz')
+    .get(async (request, response) => {
+        const quiz = await (new QuizStorageProvider()).getByQuizNumber(request.query.num);
+        response.send(quiz);
     });
 
 module.exports.routes = router;
