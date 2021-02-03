@@ -10,7 +10,7 @@ class AuthService extends PgConnectionProvider {
         if (application !== null) {
             let result = passwordHash.verify(password, application.PasswordHash);
             if (!application.IgnoreIPv4Verification) {
-                result &&= application.IPv4.trimStart().trimEnd() === ipV4;
+                result &= application.IPv4.trimStart().trimEnd() === ipV4;
             }
         } else {
             return false;
