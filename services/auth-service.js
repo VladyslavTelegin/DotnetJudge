@@ -12,6 +12,7 @@ class AuthService extends PgConnectionProvider {
             if (!application.IgnoreIPv4Verification) {
                 result &= ipV4.includes(application.IPv4.trimStart().trimEnd());
             }
+            return result;
         } else {
             return false;
         }
