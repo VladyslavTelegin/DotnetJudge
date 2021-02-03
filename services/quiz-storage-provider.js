@@ -12,7 +12,8 @@ class QuizStorageProvider extends PgConnectionProvider {
         }   
 
         const cachedQuizes = cache.get(CACHE_KEY);
-        return cachedQuizes.filter(quiz => quiz.Number == parseInt(quizNumber))[0];
+        const quiz = cachedQuizes.filter(quiz => quiz.Number == parseInt(quizNumber))[0];
+        return Object.assign({}, quiz);
     }
 
     invalidateCache() {

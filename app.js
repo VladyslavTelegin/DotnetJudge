@@ -38,5 +38,5 @@ server.get("/auth/invalidate-cache", (request, response) => {
     response.redirect('/');
 });
 
-// server.listen(3000);
+server.listen(3000);
 module.exports = server;

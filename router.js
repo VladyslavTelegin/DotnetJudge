@@ -98,6 +98,12 @@ router.route('/auth')
 router.route('/check')
     .post(async (request, response) => {
         if (!request.application) {
+            logger.Info({
+                errorMessage: 'Authentication failed.',
+                serviceName: 'AuthService',
+                methodName: 'VerifyApplication',
+                context: { userId: request.body.userId } 
+            });
             response.status(403).send({ message: ACCESS_DENIED_MESSAGE });
         } else {
             try {
@@ -117,8 +123,23 @@ router.route('/check')
 
 router.route('/quiz')
     .get(async (request, response) => {
-        const quiz = await (new QuizStorageProvider()).getByQuizNumber(request.query.num);
-        response.send(quiz);
+        if (!request.application) {
+            logger.Info({
+                errorMessage: 'Authentication failed.',
+                serviceName: 'AuthService',
+                methodName: 'VerifyApplication'
+            });
+            response.status(403).send({ message: ACCESS_DENIED_MESSAGE });
+        } else {
+            const quiz = await (new QuizStorageProvider()).getByQuizNumber(request.query.num);
+            
+            delete quiz['InputType'];
+            delete quiz['OutputType'];
+            delete quiz['InputData'];
+            delete quiz['ExpectedOutputs'];
+           
+            response.send(quiz);
+        }
     });
 
 module.exports.routes = router;
