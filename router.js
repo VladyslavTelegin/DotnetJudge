@@ -132,7 +132,7 @@ router.route('/quiz')
             response.status(403).send({ message: ACCESS_DENIED_MESSAGE });
         } else {
             try {
-                const quiz = await (new QuizStorageProvider()).getByQuizNumber(request.query.num);
+                let quiz = await (new QuizStorageProvider()).getByQuizNumber(request.query.num);
             
                 delete quiz['InputType'];
                 delete quiz['OutputType'];
