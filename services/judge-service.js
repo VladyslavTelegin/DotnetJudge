@@ -1,5 +1,6 @@
 const FiddleApiService = require('./fiddle-api-service.js');
 const QuizStorageProvider = require('./quiz-storage-provider.js');
+const logger = require('node-file-logger');
 
 const CODE_EXECUTOR_FRAGMENT = 
     "public static void Main() { foreach (var inputData in {inputDataCollection}) { var result = {callMethodName}(inputData); {consoleOutputFragment}; }}";
@@ -18,7 +19,9 @@ class JudgeService {
         
         var output = response.ConsoleOutput;
 
-        var errors = output.includes('error') ? output : null;
+        const isClrError = output.includes('error');
+
+        let errors = isClrError ? output : null;
         if (errors === null) {
             if (output !== '') {
                 var splittedOutput = output.split('\r\n');
@@ -32,17 +35,35 @@ class JudgeService {
                
                 output = "Success. All tests passed. Good luck!";
             }    
+        } else {
+            output = null;
         }
 
         var stats = response.Stats
         delete stats.IsResultCache;
 
-        return {
-            QuizNumber: request.quizNumber,
-            Output: output, 
-            Errors: errors,
-            Stats: stats
+        const result = {
+            output: output, 
+            error: errors,
+            isPassed: errors === null,
+            isClrError: isClrError,
+            isEmptyOutput: output === '',
+            clrStats: stats
         };
+
+        logger.Info({
+            serviceName: 'JudgeService',
+            methodName: 'Check',
+            context: {
+                userId: request.userId,
+                applicationId: request.application,
+                quizNumber: request.quizNumber,
+                judgedCode: request.code,
+                judgeVerdict: result
+            }
+        });
+
+        return result;
     }
 
     _wrapCodeBlock(rawCodeBlock, quizData)

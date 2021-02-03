@@ -23,18 +23,18 @@ $(document).ready(function() {
           success: function(data) {
               $('div.loader').hide();
               
-              if (data.Errors !== null) {
+              if (data.isPassed !== null) {
                      $('#submit-button').removeAttr('disabled');
                   $("#results-container").css('background', 'red');
-                  $("#results-container").append(`<p style="color: white; margin: 4px;">&gt;&gt; ${data.Errors}</p>`)
+                  $("#results-container").append(`<p style="color: white; margin: 4px;">&gt;&gt; ${data.error}</p>`)
               } else {
-                  if (data.Output === '') {
+                  if (data.isEmptyOutput) {
                       $('#submit-button').removeAttr('disabled');
                       $("#results-container").css('background', 'red');
                       $("#results-container").append(`<p style="color: white; margin: 4px;">&gt;&gt; No output.</p>`);
                   } else {
                       $("#results-container").css('background', 'green');
-                      $("#results-container").append(`<p style="color: white; margin: 4px;">&gt;&gt; ${data.Output}</p>`);
+                      $("#results-container").append(`<p style="color: white; margin: 4px;">&gt;&gt; ${data.output}</p>`);
                   }
               }
           },

@@ -62,8 +62,7 @@ router.route('/auth')
 
         const authContext = { applicationId: request.body.applicationId, ipV4: ipV4 };
         
-        try {
-         
+        try {        
             if (await authService.verifyApplication(request.body.applicationId, request.body.password, ipV4)) {
                 logger.Info({
                     message: 'Authentication succeeded.',
