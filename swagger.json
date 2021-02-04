@@ -30,7 +30,6 @@
         "tags": [
           "Authorization"
         ],
-        "summary": "Authorization",
         "description": "",
         "consumes": [
           "application/json"
@@ -42,7 +41,6 @@
           {
             "in": "body",
             "name": "body",
-            "description": "Pet object that needs to be added to the store",
             "required": true,
             "schema": {
               "$ref": "#/definitions/AuthRequest"
@@ -67,7 +65,6 @@
         "tags": [
           "Quiz"
         ],
-        "summary": "Obtaining a single quiz",
         "description": "",
         "consumes": [
           "application/json"
@@ -90,9 +87,40 @@
         ],
         "responses": {
           "200": {
-            "description": "Quiz got",
+            "description": "OK",
             "schema": {
               "$ref": "#/definitions/QuizResponse"
+            }
+          },
+          "403": {
+            "description": "Access is denied."
+          }
+        }
+      }
+    },
+    "/quizes": {
+      "get": {
+        "tags": [
+          "Quiz"
+        ],
+        "description": "",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer {token}",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/QuizesResponse"
             }
           },
           "403": {
@@ -106,7 +134,6 @@
         "tags": [
           "Check"
         ],
-        "summary": "Check code",
         "description": "",
         "produces": [
           "application/json"
@@ -178,10 +205,6 @@
     },
     "QuizResponse": {
       "type": "object",
-      "required": [
-        "id",
-        "token"
-      ],
       "properties": {
         "Id": {
           "type": "integer"
@@ -204,6 +227,12 @@
         "InitialFunctionCode": {
           "type": "string"
         }
+      }
+    },
+    "QuizesResponse": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/QuizResponse"
       }
     },
     "CheckRequest": {
