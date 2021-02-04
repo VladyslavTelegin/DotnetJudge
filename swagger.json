@@ -1,0 +1,248 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Swagger .NET Code Judge"
+  },
+  "host": "dotnet-judge-cqnbk.ondigitalocean.app",
+  "basePath": "/api",
+  "tags": [
+    {
+      "name": "Authorization",
+      "description": "Describes endpoints to perform API service authentication"
+    },
+    {
+      "name": "Quiz",
+      "description": "Gets quiz definition"
+    },
+    {
+      "name": "Check",
+      "description": "Describes endpoints to perform a check code"
+    }
+  ],
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+    "/auth": {
+      "post": {
+        "tags": [
+          "Authorization"
+        ],
+        "summary": "Authorization",
+        "description": "",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Pet object that needs to be added to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AuthRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorization succeeded",
+            "schema": {
+              "$ref": "#/definitions/AuthResponse"
+            }
+          },
+          "403": {
+            "description": "Access is denied."
+          }
+        }
+      }
+    },
+    "/quiz": {
+      "get": {
+        "tags": [
+          "Quiz"
+        ],
+        "summary": "Obtaining a single quiz",
+        "description": "",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer {token}",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "num",
+            "description": "Quiz number",
+            "type": "integer",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Quiz got",
+            "schema": {
+              "$ref": "#/definitions/QuizResponse"
+            }
+          },
+          "403": {
+            "description": "Access is denied."
+          }
+        }
+      }
+    },
+    "/check": {
+      "post": {
+        "tags": [
+          "Check"
+        ],
+        "summary": "Check code",
+        "description": "",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer {token}",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Bearer {token}",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CheckRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Quiz got",
+            "schema": {
+              "$ref": "#/definitions/CheckResponse"
+            }
+          },
+          "403": {
+            "description": "Access is denied."
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AuthRequest": {
+      "type": "object",
+      "required": [
+        "applicationId",
+        "password"
+      ],
+      "properties": {
+        "applicationId": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "AuthResponse": {
+      "type": "object",
+      "required": [
+        "id",
+        "token"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        }
+      }
+    },
+    "QuizResponse": {
+      "type": "object",
+      "required": [
+        "id",
+        "token"
+      ],
+      "properties": {
+        "Id": {
+          "type": "integer"
+        },
+        "Number": {
+          "type": "integer"
+        },
+        "CallMethodName": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "DescriptionHtml": {
+          "type": "string"
+        },
+        "SamplesHtml": {
+          "type": "string"
+        },
+        "InitialFunctionCode": {
+          "type": "string"
+        }
+      }
+    },
+    "CheckRequest": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "quizNumber": {
+          "type": "integer"
+        },
+        "userId": {
+          "type": "string"
+        }
+      }
+    },
+    "CheckResponse": {
+      "type": "object",
+      "properties": {
+        "Output": {
+          "type": "string"
+        },
+        "Error": {
+          "type": "string"
+        },
+        "IsPassed": {
+          "type": "boolean"
+        },
+        "IsClrError": {
+          "type": "boolean"
+        },
+        "IsEmptyOutput": {
+          "type": "boolean"
+        },
+        "ClrStats": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

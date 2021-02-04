@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const jwt = require('jsonwebtoken');
 const logger = require('node-file-logger');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
 const ACCESS_DENIED_MESSAGE = 'Access is denied.';
 const TOKEN_KEY = '1a2b-3c4d-5e6f-7g8h';
@@ -12,6 +14,12 @@ const QuizStorageProvider = require('./services/quiz-storage-provider.js');
 const authService = new (require('./services/auth-service.js'))();
 
 const router = express.Router();
+
+router.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+    explorer: true,
+    jsonEditor: true
+}));
+
 router.use(bodyParser.json());
 router.use(methodOverride());
 
@@ -146,6 +154,37 @@ router.route('/quiz')
                     methodName: 'getByQuizNumber',
                 });
                 response.status(500).send({ error: `Unable to get quiz with number = ${request.query.num}.` });
+            }
+        }
+    });
+
+router.route('/quizes')
+    .get(async (request, response) => {
+        if (!request.application) {
+            logger.Info({
+                errorMessage: 'Authentication failed.',
+                serviceName: 'AuthService',
+                methodName: 'VerifyApplication'
+            });
+            response.status(403).send({ message: ACCESS_DENIED_MESSAGE });
+        } else {
+            try {
+                let quizes = await (new QuizStorageProvider()).getAllQuizes();
+                quizes.forEach(quiz => {
+                    delete quiz['InputType'];
+                    delete quiz['OutputType'];
+                    delete quiz['InputData'];
+                    delete quiz['ExpectedOutputs'];
+                });
+               
+                response.send(quizes);
+            } catch (error) {
+                logger.Error({
+                    errorMessage: error.message,
+                    serviceName: 'QuizStorageProvider',
+                    methodName: 'getByQuizNumber',
+                });
+                response.status(500).send({ error: `Unable to get all quizes.` });
             }
         }
     });

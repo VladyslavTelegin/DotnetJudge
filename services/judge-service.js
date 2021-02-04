@@ -45,17 +45,11 @@ class JudgeService {
         const trim = (inputString) => inputString ? inputString.trimStart().trimEnd() : inputString;
 
         const result = {
-            output: trim(output), 
-            error: trim(errors),
-            isPassed: errors === null,
-            isClrError: isClrError,
-            clrStats: {
-                runAt: stats.RunAt,
-                compileTime: stats.CompileTime,
-                executeTime: stats.ExecuteTime,
-                memoryUsage: stats.MemoryUsage,
-                cpuUsage: stats.CpuUsage
-            }
+            Output: trim(output), 
+            Error: trim(errors),
+            IsPassed: errors === null,
+            IsClrError: isClrError,
+            ClrStats: stats
         };
 
         logger.Info({
