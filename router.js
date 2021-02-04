@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const logger = require('node-file-logger');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
+const cors = require('cors');
 
 const ACCESS_DENIED_MESSAGE = 'Access is denied.';
 const TOKEN_KEY = '1a2b-3c4d-5e6f-7g8h';
@@ -15,9 +16,17 @@ const authService = new (require('./services/auth-service.js'))();
 
 const router = express.Router();
 
+router.use(cors());
+router.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
 router.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
     explorer: true,
-    jsonEditor: true
+    jsonEditor: true,
+    enableCORS: false
 }));
 
 router.use(bodyParser.json());

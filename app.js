@@ -9,6 +9,13 @@ const AuthService = require('./services/auth-service.js');
 
 server.use(express.static(__dirname + '/public'));
 server.use(cors());
+
+server.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
 server.use(express.json());
 server.get('/', function (request, response) {
     response.redirect('/quiz?num=1');
