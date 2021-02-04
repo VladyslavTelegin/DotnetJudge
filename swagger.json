@@ -125,7 +125,6 @@
           {
             "in": "body",
             "name": "body",
-            "description": "Bearer {token}",
             "required": true,
             "schema": {
               "$ref": "#/definitions/CheckRequest"
