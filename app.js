@@ -25,7 +25,7 @@ server.use('/api', router.routes);
 server.set("view engine", "hbs");
 
 server.get("/quiz", async (request, response) => {   
-    var quiz = await (new QuizStorageProvider()).getByQuizNumber(request.query.num);
+    const quiz = await (new QuizStorageProvider()).getByQuizNumber(request.query.num);
     response.render("quiz.hbs", {
         Number: quiz.Number,
         Name: quiz.Name,
@@ -35,13 +35,13 @@ server.get("/quiz", async (request, response) => {
     });
 });
 
-server.get("/quiz/invalidate-cache", (request, response) => { 
-    (new QuizStorageProvider()).invalidateCache();
+server.get("/quiz/invalidate-cache", async (request, response) => { 
+    await (new QuizStorageProvider()).invalidateCache(request.query.isDistributed);
     response.redirect('/');
 });
 
-server.get("/auth/invalidate-cache", (request, response) => { 
-    (new AuthService()).invalidateCache();
+server.get("/auth/invalidate-cache", async (request, response) => { 
+    await (new AuthService()).invalidateCache(request.query.isDistributed);
     response.redirect('/');
 });
 
