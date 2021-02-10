@@ -102,11 +102,32 @@ class JudgeService {
         rawCodeBlock = rawCodeBlock.trimEnd();
         
         let codeExecutor = CODE_EXECUTOR_FRAGMENT
-            .replace('{inputDataCollection}', quizData.InputData)
-            .replace('{callMethodName}', quizData.CallMethodName);
+            .replace('{callMethodName}', quizData.CallMethodName)
+            .replace('{inputDataCollection}', quizData.InputData);
+
+        if (quizData.InputType.includes('<') && quizData.InputType.includes('>')) {
+            const typesArray = quizData.InputType.replace('<', '').replace('>', '').split(', ');
+            
+            let castingString = '(';
+            
+            for (let i = 0; i < typesArray.length; i++) {
+                castingString += `(${typesArray[i]}) inputData[${i}]`;
+                if (i < typesArray.length - 1) {
+                    castingString += ', ';
+                } else {
+                    castingString += ');';
+                }
+            }
+            
+            codeExecutor = codeExecutor.replace('(inputData);', castingString);
+        }
 
         if (!quizData.OutputType.includes('[]')) {
-            codeExecutor = codeExecutor.replace('{consoleOutputFragment}', 'Console.WriteLine(result)');
+            if (quizData.OutputType.includes('(') && quizData.OutputType.includes(')')) {
+                codeExecutor = codeExecutor.replace('{consoleOutputFragment}', "Console.WriteLine(result.ToString().Trim('(', ')'))");
+            } else {
+                codeExecutor = codeExecutor.replace('{consoleOutputFragment}', 'Console.WriteLine(result)');
+            } 
         } else {
             codeExecutor = codeExecutor.replace('{consoleOutputFragment}', 'Console.WriteLine(string.Join(", ", result))');
         }
