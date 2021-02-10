@@ -12,7 +12,37 @@ class JudgeService {
     }
 
     async check(request) {
-        var quizData = await this._quizStorageProvider.getByQuizNumber(request.quizNumber);
+        
+        const quizData = await this._quizStorageProvider.getByQuizNumber(request.quizNumber);
+        if (quizData.JsCheckingFunction) {
+            
+            const extractedFunc = eval(quizData.JsCheckingFunction);
+            const error = extractedFunc(request.code);
+            
+            if (error) {           
+                const wrappedError = {
+                    Output: null, 
+                    Error: error,
+                    IsPassed: false,
+                    IsClrError: false,
+                    ClrStats: {}
+                };
+
+                logger.Info({
+                    serviceName: 'JudgeService',
+                    methodName: 'JsCheck',
+                    context: {
+                        userId: request.userId,
+                        applicationId: request.application,
+                        quizNumber: request.quizNumber,
+                        judgedCode: request.code,
+                        judgeVerdict: wrappedError
+                    }
+                });
+
+                return wrappedError;
+            }
+        }
 
         var wrappedCodeBlock = this._wrapCodeBlock(request.code, quizData);
         var response = (await this._fiddleApiService.post(wrappedCodeBlock)).data;
@@ -54,7 +84,7 @@ class JudgeService {
 
         logger.Info({
             serviceName: 'JudgeService',
-            methodName: 'Check',
+            methodName: 'DotnetCheck',
             context: {
                 userId: request.userId,
                 applicationId: request.application,

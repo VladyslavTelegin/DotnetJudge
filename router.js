@@ -154,6 +154,7 @@ router.route('/quiz')
                 delete quiz['OutputType'];
                 delete quiz['InputData'];
                 delete quiz['ExpectedOutputs'];
+                delete quiz['JsCheckingFunction'];
                
                 response.send(quiz);
             } catch (error) {
@@ -184,6 +185,7 @@ router.route('/quizes')
                     delete quiz['OutputType'];
                     delete quiz['InputData'];
                     delete quiz['ExpectedOutputs'];
+                    delete quiz['JsCheckingFunction'];
                 });
                
                 response.send(quizes);

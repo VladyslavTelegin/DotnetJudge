@@ -9,7 +9,7 @@ class FiddleApiService {
             Compiler: 'Roslyn',
             ProjectType: 'Console',
             NuGetPackageVersionIds: '47080',
-            UseResultCache: true
+            UseResultCache: false
         }).catch(error => {
             console.error(error);
         });
