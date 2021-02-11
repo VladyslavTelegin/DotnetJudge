@@ -15,7 +15,7 @@ class QuizStorageProvider extends PgConnectionProvider {
         }   
 
         const cachedQuizes = cache.get(CACHE_KEY);
-        return cachedQuizes.map(quiz => Object.assign({}, quiz));
+        return cachedQuizes.map(quiz => Object.assign({}, quiz)).sort((a, b) => a.Number - b.Number);
     }
 
     async getByQuizNumber(quizNumber) {
