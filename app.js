@@ -24,14 +24,21 @@ server.use('/api', router.routes);
 
 server.set("view engine", "hbs");
 
+const LEVEL_ADAPTER = {
+    'L': 'Low',
+    'M': 'Medium',
+    'H': 'High'
+};
+
 server.get("/quiz", async (request, response) => {   
     const quiz = await (new QuizStorageProvider()).getByQuizNumber(request.query.num);
     response.render("quiz.hbs", {
         Number: quiz.Number,
         Name: quiz.Name,
+        Level: LEVEL_ADAPTER[quiz.Level],
         FunctionCode: quiz.InitialFunctionCode,
         Description: new hbs.SafeString(quiz.DescriptionHtml),
-        Samples: new hbs.SafeString(quiz.SamplesHtml)
+        Samples: new hbs.SafeString(quiz.SamplesHtml),
     });
 });
 
