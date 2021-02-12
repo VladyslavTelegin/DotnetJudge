@@ -14,7 +14,7 @@ class JudgeService {
     async check(request) {
         
         // Clear multiline comments.
-        request.code = request.code.replace(/^\/\*[\s\S]+\*\/$/gmi, '');
+        // request.code = request.code.replace(/^\/\*[\s\S]+\*\/$/gmi, '');
 
         const quizData = await this._quizStorageProvider.getByQuizNumber(request.quizNumber);
         if (quizData.JsCheckingFunction) {
