@@ -92,7 +92,6 @@ class JudgeService {
                 userId: request.userId,
                 applicationId: request.application,
                 quizNumber: request.quizNumber,
-                judgedCode: request.code,
                 judgeVerdict: result
             }
         });
