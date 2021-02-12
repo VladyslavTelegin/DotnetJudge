@@ -11,7 +11,7 @@ $(document).ready(function() {
       $('#submit-button').attr('disabled', 'disabled');
       $('div.loader').show();
         $("#results-container").empty();
-        var codeVal = editor.getCode().replaceAll('"', '\"');
+        var codeVal = editor.getCode().replace(/"/gi, '\"');
       var quizNumberVal = $('input#quizNumber').val();
         var body = JSON.stringify({ code: codeVal, quizNumber: quizNumberVal, userId: 'ui' });
         $.ajax({
