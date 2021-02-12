@@ -6,7 +6,7 @@ class FiddleApiService {
         return axios.post(FIDDLE_URI, {
             CodeBlock: codeBlock,
             Language: 'CSharp',
-            Compiler: 'Roslyn',
+            Compiler: 'Net45',
             ProjectType: 'Console',
             NuGetPackageVersionIds: '47080',
             UseResultCache: false
