@@ -1,0 +1,115 @@
+/**
+* Hard
+* Write a function that takes in two strings: a main string and a potential substring of the main string. The function should return a version of the main
+* string with every instance of the substring in it wrapped between underscores.
+* If two or more instances of the substring in the main string overlap each other or sit side by side, the underscores relevant to these substrings should
+* only appear on the far left of the leftmost substring and on the far right of the rightmost substring. If the main string doesn't contain the other string
+* at all, the function should return the main string intact.
+* Example:
+* S = "testthis is a testtest to see if testestest it works" U = "test" => "_test_this is a _testtest_ to see if _testestest_ it works"
+*/
+
+using System;
+using System.Text;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+
+public class Program
+{
+     public static string Underscorify(string s, string sub)
+    {
+        var locations = Collapse(GetLocations(s, sub));
+        return InternalUnderscorify(s, locations);
+    }
+
+
+    private static List<List<int>> GetLocations(string s, string sub)
+    {
+        var locations = new List<List<int>>();
+
+        var startIndex = 0;
+
+        while (startIndex < s.Length)
+        {
+            var nextIndex = s.IndexOf(sub, startIndex, StringComparison.Ordinal);
+            if (nextIndex != -1)
+            {
+                locations.Add(new List<int> { nextIndex, nextIndex + sub.Length });
+                startIndex = nextIndex + 1;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        return locations;
+    }
+
+    private static List<List<int>> Collapse(List<List<int>> locations)
+    {
+        if (!locations.Any())
+        {
+            return locations;
+        }
+
+        var newLocations = new List<List<int>> { locations.First() };
+        var previous = newLocations.First();
+
+        for (var i = 1; i < locations.Count; i++)
+        {
+            var current = locations[i];
+            if (current[0] <= previous[1])
+            {
+                previous[1] = current[1];
+            }
+            else
+            {
+                newLocations.Add(current);
+                previous = current;
+            }
+        }
+
+        return newLocations;
+    }
+
+    private static string InternalUnderscorify(string s, List<List<int>> locations)
+    {
+        var locationIdx = 0;
+        var stringIdx = 0;
+        var inBetweenUnderscores = false;
+
+        var finalChars = new List<char>();
+        var i = 0;
+
+        while (stringIdx < s.Length && locationIdx < locations.Count)
+        {
+            if (stringIdx == locations[locationIdx][i])
+            {
+                finalChars.Add('_');
+                inBetweenUnderscores = !inBetweenUnderscores;
+
+                if (!inBetweenUnderscores)
+                {
+                    locationIdx += 1;
+                }
+
+                i = i == 1 ? 0 : 1;
+            }
+            finalChars.Add(s[stringIdx]);
+            stringIdx++;
+        }
+
+        if (locationIdx < locations.Count)
+        {
+            finalChars.Add('_');
+        }
+        else if (stringIdx < s.Length)
+        {
+            finalChars.AddRange(s.Substring(stringIdx, s.Length - stringIdx));
+        }
+
+        return new string(finalChars.ToArray());
+    }
+}

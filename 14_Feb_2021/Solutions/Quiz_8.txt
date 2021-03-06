@@ -1,0 +1,39 @@
+/**
+* Easy
+* You are given a string. It only consists of '0' and '1'.
+* You want all '1' characters to form a contiguous segment.
+* For example, in lines "0", "1", "00111" and "01111100", all characters '1' form a contiguous segment, but in lines "0101", "100001" and "11111111111101" they do not.
+*/
+
+using System;
+using System.Text;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+
+public class Program
+{
+    public static int RemoveZeros(string input)
+    {
+        int l = 0;
+        int r = input.Length - 1;
+        int ans = 0;
+        
+        while(l <= r && input[l] == '0')
+        {
+            ++l;
+        }
+        
+        while(r >= l && input[r] == '0')
+        {
+            --r;
+        };
+            
+        for(int i = l; i <= r; i++)
+        { 
+            ans += input[i] == '0' ? 1 : 0;
+        }
+            
+        return ans;
+    }
+}

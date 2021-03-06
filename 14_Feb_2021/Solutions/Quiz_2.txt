@@ -1,0 +1,15 @@
+/**
+* Easy
+* Given an integer array. Find integer X which is a result of mod: ((array[i] % array[i + 1]) % array[i + 2]) % array[i + ..n].
+*/
+
+using System;
+using System.Text;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+
+public class Program
+{
+    public static int ComplexMod(int[] array) => array.Aggregate((x, y) => x % y);
+}

@@ -1,0 +1,52 @@
+/**
+* Medium
+* We define subsequence as any subset of an array. We define a subarray as a contiguous subsequence in an array.
+* Given an array, find the maximum possible sum among:
+* - all nonempty subarrays.
+* - all nonempty subsequences.
+* Print the two values as space-separated integers on one line.
+* Note that empty subarrays/subsequences should not be considered.
+* Example: [-1, 2, 3, -4, 5, 10]
+* The maximum subarray sum is comprised of elements at inidices [1 - 5]. Their sum is [2, 3, -4, 5, 10] = 16.
+* The maximum subsequence sum is comprised of elements at indices [1, 2, 4, 5] and their sum is [2, 3, 5, 10] = 20.
+*/
+
+using System;
+using System.Text;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+
+public class Program
+{
+    public static (int, int) FindMaximumSubarray(int[] array)
+    {
+         int ans = array[0],
+            ans_l = 0,
+            ans_r = 0,
+            sum = 0,
+            min_sum = 0,
+            min_pos = -1;
+
+        for (int r = 0; r < array.Length; ++r)
+        {
+            sum += array[r];
+
+            int cur = sum - min_sum;
+            if (cur > ans)
+            {
+                ans = cur;
+                ans_l = min_pos + 1;
+                ans_r = r;
+            }
+
+            if (sum < min_sum)
+            {
+                min_sum = sum;
+                min_pos = r;
+            }
+        }
+
+        return (ans_l, ans_r);
+    }
+}

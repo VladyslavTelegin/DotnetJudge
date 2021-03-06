@@ -1,0 +1,119 @@
+/**
+* Medium
+* Given a string representing the starting number, and a maximum number of changes allowed, create the largest palindromic
+* string of digits possible or the string '-1' if it is not possible to create a palindrome under the contstraints.
+* Example:
+* s = 1231 k = 3
+* Make 3 replacements to get 9339.
+* s = 12321 k = 1
+* Make 1 replacement to get 12921.
+*/
+
+using System;
+using System.Text;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+
+public class Program
+{
+    public static string GetHighestValuePalindrome(string s, int k)
+    {
+        int n = s.Length;
+
+        int lo = 0;
+        int hi = n - 1; ;
+        char[] @string = s.ToCharArray();
+        int diff = 0;
+
+        for (int i = 0, j = n - 1; i < n / 2; i++, j--)
+        {
+            if (@string[i] != @string[j])
+            {
+                diff++;
+            }
+        }
+
+        if (diff > k)
+        {
+            return "-1";
+        }
+
+        while (hi >= lo)
+        {
+            if (k <= 0)
+            {
+                break;
+            }
+
+            if (@string[lo] == @string[hi])
+            {
+                if (k > 1 && (k - 2) >= diff && @string[lo] != '9')
+                {
+                    @string[lo] = '9';
+                    @string[hi] = '9';
+                    k -= 2;
+                }
+            }
+            else
+            {
+                if (k > 1 && (k - 2) >= diff - 1)
+                {
+                    if (@string[lo] != '9')
+                    {
+                        @string[lo] = '9';
+                        k--;
+                    }
+                    if (@string[hi] != '9')
+                    {
+                        @string[hi] = '9';
+                        k--;
+                    }
+                }
+                else
+                {
+                    if (@string[lo] > @string[hi])
+                    {
+                        @string[hi] = @string[lo];
+                    }
+                    else
+                    {
+                        @string[lo] = @string[hi];
+                    }
+                    k--;
+                }
+                diff--;
+            }
+            if (lo == hi && k > 0)
+            {
+                @string[lo] = '9';
+                k--;
+            }
+            lo++;
+            hi--;
+        }
+
+        s = new string(@string);
+        return isPalindrome(s) ? s : "-1";
+    }
+
+
+    static bool isPalindrome(String s)
+    {
+        int i = 0;
+        int j = s.Length - 1;
+
+        while (j > i)
+        {
+            if (s[i] == s[j])
+            {
+                i++; j--;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+}

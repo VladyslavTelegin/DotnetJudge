@@ -1,0 +1,45 @@
+/**
+* Easy
+* There is a string, s, of lowercase English letters that is repeated infinitely many times.
+* Given an integer, n, find and print the number of letter a's in the first n letters of the infinite string.
+* Example
+* s = "abcac" n = 10
+* The substring we consider is abcacabcac, the first 10 characters of the infinite string. There are 4 occurrences of a in the substring.
+*/
+
+using System;
+using System.Text;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+
+public class Program
+{
+    public static long RepeatedString(string s, int n)
+    {
+        int strLength = s.Length;
+        var counter = 0;
+
+        var multiplier = n / strLength;
+        for (var i = 0; i < strLength; i++)
+        {
+            if (s[i] == 'a')
+            {
+                counter++;
+            }
+        }
+
+        counter *= multiplier;
+
+        int residualStrLen = n - strLength * multiplier;
+        for (var i = 0; i < residualStrLen; i++)
+        {
+            if (s[i] == 'a')
+            {
+                counter++;
+            }
+        }
+
+        return counter;
+    }
+}

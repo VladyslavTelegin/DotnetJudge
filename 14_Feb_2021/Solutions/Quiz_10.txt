@@ -1,0 +1,52 @@
+/**
+* Medium
+* Given an array of integers and a target value, determine the number of pairs of array elements that have a difference equal to the target value.
+* Example
+* k = 1 arr = [1,2,3,4]
+There are three values that differ by k=1: 2-1=1, 3-2=1, and 4-3=1. Return 3.
+*/
+
+using System;
+using System.Text;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+
+public class Program
+{
+    private static bool BinarySearch(int[] arr, int numberToFind)
+    {
+        int left = 0;
+        int right = arr.Length - 1;
+
+        while (left <= right)
+        {
+            int mid = left + (right - left) / 2;
+            if (arr[mid] == numberToFind)
+                return true;
+            if (arr[mid] < numberToFind)
+                left = mid + 1;
+            else
+                right = mid - 1;
+        }
+        return false;
+    }
+
+    public static int Pairs(int k, int[] array)
+    {
+        // Sort the array
+       Array.Sort(array);
+
+        int result = 0;
+        foreach (var i in array)
+        {
+            int numberToSearch = i - k;
+            if (BinarySearch(array, numberToSearch))
+            {
+                result++;
+            }
+        }
+
+        return result;
+    }
+}

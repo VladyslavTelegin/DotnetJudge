@@ -1,0 +1,41 @@
+/**
+* Hard
+* Write a function that takes in an array of distinct integers as well
+* as an integer k  and that returns the kth smallest integer in that array.
+* Please note that you are unable to use Linq & Sort().
+* a = [8, 5, 2, 9, 7, 6, 3] k = 3 => 5
+*/
+
+using System;
+using System.Text;
+using System.Collections;
+using System.Collections.Generic;
+
+public class Program
+{
+    public static int QuickSelect(int n, int[] array)
+    {
+        for (var write = 0; write < array.Length; write++)
+        {
+            for (var sort = 0; sort < array.Length - 1; sort++)
+            {
+                if (array[sort] < array[sort + 1])
+                {
+                    var temp = array[sort + 1];
+                    array[sort + 1] = array[sort];
+                    array[sort] = temp;
+                }
+            }
+        }
+
+        Array.Reverse(array);
+
+        var list = new List<int>(new HashSet<int>(array));
+        if (list.Count <= n)
+        {
+            return list[list.Count - 1];
+        }
+
+        return list[n - 1];
+    }
+}

@@ -1,0 +1,26 @@
+using System;
+using System.Text;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+
+public class Program
+{
+    public static int GetMoneySpent(int[] keyboards, int[] drives, int budget)
+    {
+        drives = drives.OrderBy(_ => _).ToArray();
+        keyboards = keyboards.OrderBy(_ => _).ToArray();
+        var max = -1;
+        foreach (var drive in drives) 
+        {
+            foreach (var keyboard in keyboards)
+            {
+                if (drive + keyboard <= budget)
+                {
+                    max = (drive + keyboard > max) ? drive + keyboard : max;
+                }
+            }
+        }
+        return max;
+    }
+}
